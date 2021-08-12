@@ -1,6 +1,7 @@
 ﻿using DapperUnitOfWorkAndDapperExtensionsExample.Models;
 using DapperUnitOfWorkAndDapperExtensionsExample.Repositories;
 using DapperUnitOfWorkAndDapperExtensionsExample.UnitsOfWork;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace DapperUnitOfWorkAndDapperExtensionsExample.Controllers
                                   [FromServices] INotificationRepository repository
                                  )
         {
-            
+            IActionResult actionResult = null;
             try
             {
                 unitOfWork.Begin();
@@ -43,15 +44,16 @@ namespace DapperUnitOfWorkAndDapperExtensionsExample.Controllers
 
                 unitOfWork.Commit();
 
+                actionResult = Ok();
             }
             catch (Exception ex)
             {
-
+                unitOfWork.Rollback();
                 Console.WriteLine(ex);
+                actionResult = new ObjectResult(ex.Message) { StatusCode = StatusCodes.Status500InternalServerError };
             }
 
-            return Ok();
-
+            return actionResult;
         }
 
     }
