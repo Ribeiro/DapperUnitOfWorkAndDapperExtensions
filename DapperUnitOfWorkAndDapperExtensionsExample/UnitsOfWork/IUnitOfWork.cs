@@ -11,6 +11,5 @@ namespace DapperUnitOfWorkAndDapperExtensionsExample.UnitsOfWork
         IDbTransaction Transaction { get; }
         void Begin();
         void Commit();
-        void Rollback();
     }
 }

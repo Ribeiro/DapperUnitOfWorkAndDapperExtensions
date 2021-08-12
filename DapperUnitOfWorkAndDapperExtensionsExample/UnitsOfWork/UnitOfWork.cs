@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -40,14 +41,25 @@ namespace DapperUnitOfWorkAndDapperExtensionsExample.UnitsOfWork
 
         public void Commit()
         {
-            _transaction.Commit();
-            Dispose();
+            try
+            {
+                _transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                Rollback();
+                Log.Error(ex, ex.Message);
+                throw new Exception($"Commit failed: {ex.Message}", ex);
+
+            }finally
+            {
+                Dispose();
+            }
         }
 
-        public void Rollback()
+        private void Rollback()
         {
             _transaction.Rollback();
-            Dispose();
         }
 
         public void Dispose() => _transaction?.Dispose();

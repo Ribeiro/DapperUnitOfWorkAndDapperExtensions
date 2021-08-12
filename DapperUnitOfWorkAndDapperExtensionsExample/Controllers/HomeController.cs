@@ -48,8 +48,6 @@ namespace DapperUnitOfWorkAndDapperExtensionsExample.Controllers
             }
             catch (Exception ex)
             {
-                unitOfWork.Rollback();
-                Console.WriteLine(ex);
                 actionResult = new ObjectResult(ex.Message) { StatusCode = StatusCodes.Status500InternalServerError };
             }
 
